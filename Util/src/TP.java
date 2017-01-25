@@ -1,4 +1,4 @@
-﻿
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -10,12 +10,13 @@ import java.util.List;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Image;
+import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfAction;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfOutline;
 import com.itextpdf.text.pdf.PdfWriter;
 
-public class Main {
+public class TP {
 	
 	private static List<File> file_list;
 	private static String dirPath;
@@ -67,7 +68,7 @@ public class Main {
 				String img_path = img.getAbsolutePath();
 				if(img_path.endsWith("png") || img_path.endsWith("jpg") ){
 					Image png = Image.getInstance(img_path);
-					document.setPageSize(new Rectangle(png.getWidth(), png.getHeight()));
+					document.setPageSize(new Rectangle(1.1f*png.getWidth(), 1.1f*png.getHeight()));
 					document.newPage();
 					if(flag == 1){
 						//如果是第一页则添加至目录且定位
@@ -81,7 +82,7 @@ public class Main {
 					flag++;
 				}
 			}
-			System.out.println("正在添加" + file.getName() + "...");
+			System.out.println("正在添加" + file.getName());
 		}
 		
           

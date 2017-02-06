@@ -11,7 +11,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class FC {
+public class FreeComic {
 	public static void main(String [] args) throws IOException{
 		useboth();
 	}

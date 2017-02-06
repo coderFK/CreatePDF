@@ -5,10 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
@@ -19,9 +16,10 @@ import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfOutline;
 import com.itextpdf.text.pdf.PdfWriter;
 
-public class TP3 {
+public class ToPDF2 {
 	
-	private static Set<String> file_list;
+	private static List<File> file_list;
+	private static List<File> file_list2;
 	private static List<String> str_list;
 	private static String dirPath;
 	private static String targetPath;
@@ -45,14 +43,24 @@ public class TP3 {
 	}
 
 	private static void getFileList(){
-		file_list = new TreeSet<String>(new MyTreeSetCmp());
+		file_list = new ArrayList<File>();
+		file_list2 = new ArrayList<File>();
 		File dir_1 = new File(dirPath);
 		if(dir_1.exists() && dir_1.isDirectory()){
 			System.out.println("正在解析文件...");
-			for(String dir_2 : dir_1.list()){
-				if(dir_2.endsWith(".jpg")){
+			for(File dir_2 : dir_1.listFiles()){
+				if(dir_2.getName().endsWith(".jpg")){
 					file_list.add(dir_2);
 				}
+				else if(dir_2.isDirectory()){
+					for(File dir_3 : dir_2.listFiles()){
+						file_list2.add(dir_3);
+					}
+				}
+			}
+			
+			for(File dir_4 : file_list2){
+				file_list.add(dir_4);
 			}
 			
 		}
@@ -69,14 +77,26 @@ public class TP3 {
 				new FileOutputStream(targetPath));
 		document.open();
 		
-		for(String file : file_list){
+		for(File file : file_list){
+			String filename = file.getName();
+			String img_path = file.getAbsolutePath();
 			
-			Image png = Image.getInstance(dirPath + "\\"+file);
+			Image png = Image.getInstance(img_path);
 			document.setPageSize(new Rectangle(1.1f*png.getWidth(), 1.1f*png.getHeight()));
-			document.newPage();
-			document.add(png);	
 			
-			System.out.println("正在添加" + file);
+			document.newPage();
+			if(filename.endsWith("001.jpg")){
+				String title = filename.substring(0, filename.indexOf("001.jpg"));
+				str_list.add(title);
+				//如果是第一页则添加至目录且定位
+				document.add(new Chunk(png,0,-png.getHeight()).
+						setLocalDestination(title));
+			}
+			else{
+				document.add(png);	
+			}
+			
+			System.out.println("正在添加" + file.getName());
 		}
           
         PdfContentByte cb = writer.getDirectContent();  
@@ -89,24 +109,4 @@ public class TP3 {
         document.close();
         System.out.println("转化完成！");
 	}
-}
-
-
-class MyTreeSetCmp implements Comparator<String>{
-
-	@Override
-	public int compare(String o1, String o2) {
-		// TODO Auto-generated method stub
-		if(o1.length() < o2.length()){
-			return -1;
-		}
-		else if(o1.length() > o2.length()){
-			return 1;
-		}
-		else{
-			return o1.compareTo(o2);
-		}
-	}
-
-	
 }
